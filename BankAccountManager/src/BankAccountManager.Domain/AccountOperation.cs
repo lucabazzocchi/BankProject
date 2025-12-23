@@ -11,37 +11,25 @@ namespace BankAccountManager.Domain
         public double Amount { get; set; }
         public DateTime Date { get; set; }
 
-        private string operationType { get; set; }
+        private string OperationType { get; set; }
 
 
         public AccountOperation(double amount, DateTime date)
         {
             Amount = amount;
             Date = date;
-            operationType = string.Empty;
-            OperationType();
-        }
-
-        public string OperationType()
-        {
 
             if (Amount > 0)
-            {
-                operationType = "Deposit";
-            }
+                OperationType = "Deposit";
             else if (Amount < 0)
-            {
-                operationType = "Withdrawal";
-            }
+                OperationType = "Withdrawal";
             else
-            {
-                throw new InvalidOperationException("amount cannot be 0");
-            }
-            return operationType;
-
+                throw new InvalidOperationException("Amount cannot be 0");
         }
 
-        public string OperationDescription() => Amount.ToString() + " - " + Date.ToString() + " - " + operationType;
+
+
+        public string Description => $"{Amount} - {Date} - {OperationType}";
 
 
 

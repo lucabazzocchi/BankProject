@@ -9,45 +9,29 @@ namespace BankAccountManager.Domain
     public class Bank
     {
         public List<CurrentAccount> Accounts { get; set; }
-        const double standardBalance = 0;
-        Guid id { get; set; }
+        private const double standardBalance = 0;
+
         public Bank()
         {
             Accounts = new List<CurrentAccount>();
         }
 
-        public void CreateAccount(Guid id, string name)
-        {
-
-            Accounts.Add(new CurrentAccount(id, name, standardBalance));
-        }
-
         public void CreateAccountPlus(Guid id, string name)
         {
-
             Accounts.Add(new CurrentAccountPlus(id, name, standardBalance));
         }
 
-        public string GetInformationById(Guid guid)
-        {
-            string informations = string.Empty;
-            for (int i = 0; i < Accounts.Count; i++)
-            {
-                if (guid == Accounts[i].Id)
-                {
-                    informations = Accounts[i].GetInformation();
-                    break;
-                }
-
-            }
-            return informations;
-        }
+        // --- LA TUA LOGICA ORIGINALE ---
 
         public string GetBiggerHolder()
         {
+            // Protezione: se non ci sono conti, ritorna subito per evitare errori
+            if (Accounts.Count == 0) return "Nessun conto presente";
+
             List<string> Holders = new List<string>();
             List<int> Counters = new List<int>();
             string biggerHolder = string.Empty;
+
             for (int i = 0; i < Accounts.Count; i++)
             {
                 if (Holders.Contains(Accounts[i].Name))
@@ -60,45 +44,19 @@ namespace BankAccountManager.Domain
                     Holders.Add(Accounts[i].Name);
                     Counters.Add(1);
                 }
-
             }
+
+            // Qui serve System.Linq per usare .Max()
             int maxIndex = Counters.IndexOf(Counters.Max());
             return Holders[maxIndex];
         }
 
-        public string getBiggerHolder()
-        {
-            List<string> Holders = new List<string>();
-            List<int> Counters = new List<int>();
-            foreach (var a in Accounts)
-            {
-                if (Holders.Contains(a.Name))
-                {
-                    int indx = Accounts.IndexOf(a);
-                    Counters[indx]++;
-                }
-                else
-                {
-                    Holders.Add(a.Name);
-                    Counters.Add(1);
-                }
-            }
-            int maxIndex = 0;
-            foreach (var c in Counters)
-            {
-                if (c > maxIndex)
-                {
-                    maxIndex = c;
-                }
-            }
-            return Holders[maxIndex];
-        }
-
-        public string findMaxPlus()
+        public string FindMaxPlus()
         {
             List<CurrentAccountPlus> pluses = new List<CurrentAccountPlus>();
             int maxValue = 0;
             string maxPlusOperations = "";
+
             foreach (var a in Accounts)
             {
                 if (a is CurrentAccountPlus)
@@ -106,6 +64,7 @@ namespace BankAccountManager.Domain
                     pluses.Add((CurrentAccountPlus)a);
                 }
             }
+
             foreach (var c in pluses)
             {
                 if (c.Operations.Count > maxValue)
@@ -113,7 +72,6 @@ namespace BankAccountManager.Domain
                     maxValue = c.Operations.Count;
                     maxPlusOperations = c.Name;
                 }
-
             }
             return maxPlusOperations;
         }
